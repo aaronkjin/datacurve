@@ -1,4 +1,4 @@
-"""Placeholder test to verify pytest runs."""
+"""Placeholder test to verify pytest runs"""
 
 
 def test_placeholder():

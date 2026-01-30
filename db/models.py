@@ -1,4 +1,4 @@
-"""SQLAlchemy ORM models — matching docs/SPEC.md table definitions."""
+"""SQLAlchemy ORM models"""
 
 import uuid
 

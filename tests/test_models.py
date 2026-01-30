@@ -1,7 +1,4 @@
-"""Tests for core/models.py, core/validation.py, and core/redaction.py.
-
-Covers serialization round-trips, validation error cases, and redaction hooks.
-"""
+"""Tests for core/models.py, core/validation.py, and core/redaction.py: serialization round-trips, validation error cases, and redaction hooks"""
 
 from __future__ import annotations
 
@@ -478,8 +475,8 @@ class TestValidateEventBatch:
         with pytest.raises(TraceValidationError):
             validate_event_batch(data)
 
+    # Terminal command with wrong payload shape
     def test_payload_validated_per_type(self):
-        """Terminal command with wrong payload shape."""
         data = {"events": [_make_event_dict(seq=1, event_type="terminal_command", payload={
             "file_path": "wrong field",
         })]}

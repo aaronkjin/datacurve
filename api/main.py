@@ -1,4 +1,4 @@
-"""FastAPI ingestion service — entrypoint."""
+"""Entrypoint for FastAPI ingestion service"""
 
 from fastapi import FastAPI
 

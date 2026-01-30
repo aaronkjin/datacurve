@@ -1,4 +1,4 @@
-"""JSON Schema validation + error reporting utilities for trace ingestion."""
+"""JSON schema validation + error reporting utils for trace ingestion"""
 
 from __future__ import annotations
 
@@ -14,9 +14,8 @@ from core.models import (
 )
 
 
+# Structured validation error for API responses
 class ValidationErrorDetail:
-    """Structured validation error for API responses."""
-
     def __init__(self, field: str, message: str, value: object = None):
         self.field = field
         self.message = message
@@ -29,9 +28,8 @@ class ValidationErrorDetail:
         return d
 
 
+# Raised when trace data fails validation with actionable error details
 class TraceValidationError(Exception):
-    """Raised when trace data fails validation with actionable error details."""
-
     def __init__(self, errors: list[ValidationErrorDetail]):
         self.errors = errors
         super().__init__(f"{len(errors)} validation error(s)")
@@ -43,8 +41,8 @@ class TraceValidationError(Exception):
         }
 
 
+# Convert Pydantic ValidationError to our structured error format
 def _pydantic_errors_to_details(exc: ValidationError) -> list[ValidationErrorDetail]:
-    """Convert Pydantic ValidationError to our structured error format."""
     details: list[ValidationErrorDetail] = []
     for err in exc.errors():
         field = ".".join(str(loc) for loc in err["loc"])
@@ -56,23 +54,16 @@ def _pydantic_errors_to_details(exc: ValidationError) -> list[ValidationErrorDet
     return details
 
 
+# Validate a POST /traces request body
 def validate_trace_create(data: dict) -> TraceCreate:
-    """Validate a POST /traces request body. Raises TraceValidationError on failure."""
     try:
         return TraceCreate.model_validate(data)
     except ValidationError as exc:
         raise TraceValidationError(_pydantic_errors_to_details(exc)) from exc
 
 
+# Validate a POST /traces/{trace_id}/events request body
 def validate_event_batch(data: dict) -> EventBatch:
-    """Validate a POST /traces/{trace_id}/events request body.
-
-    Performs two-phase validation:
-    1. Structural validation of the event envelope (event_id, seq, type, actor, etc.)
-    2. Payload validation against the typed schema for each event's type.
-
-    Raises TraceValidationError with all errors collected.
-    """
     # Phase 1: envelope validation
     try:
         batch = EventBatch.model_validate(data)
@@ -105,24 +96,16 @@ def validate_event_batch(data: dict) -> EventBatch:
     return batch
 
 
+# Validate a POST /traces/{trace_id}/finalize request body
 def validate_finalize(data: dict) -> FinalizeRequest:
-    """Validate a POST /traces/{trace_id}/finalize request body."""
     try:
         return FinalizeRequest.model_validate(data)
     except ValidationError as exc:
         raise TraceValidationError(_pydantic_errors_to_details(exc)) from exc
 
 
+# Ensure event seq values are strictly monotonically increasing
 def validate_event_seq_monotonic(events: list[Event], current_high: int = 0) -> None:
-    """Ensure event seq values are strictly monotonically increasing.
-
-    Args:
-        events: List of events to check.
-        current_high: The current highest seq in the trace (0 if no events yet).
-
-    Raises:
-        TraceValidationError if seq is not monotonically increasing.
-    """
     errors: list[ValidationErrorDetail] = []
     prev = current_high
     for i, event in enumerate(events):

@@ -1,4 +1,4 @@
-"""Pydantic models for trace/event schema — built to docs/SPEC.md contract."""
+"""Pydantic models for trace/event schema"""
 
 from __future__ import annotations
 
@@ -206,7 +206,7 @@ class EventContext(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Event payloads (discriminated by event type)
+# Event payloads
 # ---------------------------------------------------------------------------
 
 class SelectionRange(BaseModel):
@@ -290,7 +290,7 @@ class NavigationPayload(BaseModel):
 
 
 # ---------------------------------------------------------------------------
-# Payload type mapping (for validation)
+# Payload type mapping
 # ---------------------------------------------------------------------------
 
 PAYLOAD_TYPE_MAP: dict[EventType, type[BaseModel]] = {
@@ -339,14 +339,14 @@ class Event(BaseModel):
     context: EventContext | None = None
     payload: dict  # validated dynamically via PAYLOAD_TYPE_MAP
 
+    # Parse and validate payload dict against the typed schema for this event type
     def validated_payload(self) -> BaseModel:
-        """Parse and validate payload dict against the typed schema for this event type."""
         model_cls = PAYLOAD_TYPE_MAP[self.type]
         return model_cls.model_validate(self.payload)
 
 
+# Request body for POST /traces/{trace_id}/events
 class EventBatch(BaseModel):
-    """Request body for POST /traces/{trace_id}/events."""
     events: list[Event] = Field(..., min_length=1, max_length=100)
 
 
@@ -408,12 +408,11 @@ class JudgeResult(BaseModel):
     @field_validator("overall")
     @classmethod
     def validate_overall(cls, v: float, info) -> float:
-        """Round overall to one decimal place per RUBRIC.md."""
         return round(v, 1)
 
 
+# Raw JSON output shape from the LLM judge
 class JudgeOutput(BaseModel):
-    """Raw JSON output shape from the LLM judge (per RUBRIC.md)."""
     scores: JudgeScores
     overall: float = Field(..., ge=0.0, le=5.0)
     rationale: str = Field(..., min_length=1)
@@ -435,21 +434,21 @@ class QA(BaseModel):
 # Top-level Trace
 # ---------------------------------------------------------------------------
 
+# Request body for POST /traces
 class TraceCreate(BaseModel):
-    """Request body for POST /traces."""
     repo: Repo
     task: Task
     developer: Developer
     environment: Environment
 
 
+# Request body for POST /traces/{trace_id}/finalize
 class FinalizeRequest(BaseModel):
-    """Request body for POST /traces/{trace_id}/finalize."""
     final_state: FinalState
 
 
+# Full assembled trace document
 class Trace(BaseModel):
-    """Full assembled trace document."""
     trace_version: str = "1.0"
     trace_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     created_at_ms: int = Field(..., ge=0)

@@ -1,4 +1,4 @@
-# Core dependencies
+# Core deps
 fastapi>=0.110.0
 uvicorn[standard]>=0.27.0
 sqlalchemy>=2.0.0
@@ -12,7 +12,7 @@ pydantic-settings>=2.1.0
 httpx>=0.26.0
 python-multipart>=0.0.6
 
-# Dev / test dependencies
+# Dev/test deps
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
 pytest-cov>=4.1.0

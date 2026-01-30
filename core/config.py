@@ -1,17 +1,15 @@
-"""Application configuration via environment variables."""
+"""App config via env vars"""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # Database (async driver for app, sync driver for Alembic)
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/datacurve"
-    DATABASE_URL_SYNC: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/datacurve"
-
-    # Redis (Celery broker + result backend)
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/datacurve"  # Async driver for app
+    DATABASE_URL_SYNC: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/datacurve"  # Sync driver for Alembic
+    
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    # Blob store root directory
+    # Blob store root dir
     BLOB_STORE_PATH: str = "/data/blobs"
 
     # LLM judge model

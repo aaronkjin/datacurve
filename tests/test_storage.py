@@ -1,4 +1,4 @@
-"""Tests for storage layer: blob store + DB models."""
+"""Tests for storage layer: blob store + DB models"""
 
 from __future__ import annotations
 
@@ -20,18 +20,13 @@ from db.models import Base, BlobRow, EventRow, TraceRow
 
 @pytest.fixture()
 def blob_store(tmp_path):
-    """Blob store rooted in a temporary directory."""
+    # Blob store rooted in a temp dir
     return LocalFsBlobStore(root=tmp_path)
 
 
 @pytest.fixture()
 def db_session():
-    """Synchronous SQLite in-memory session for DB model tests.
-
-    We swap PostgreSQL-specific column types for SQLite-compatible ones
-    so we can test ORM behaviour without Docker.
-    """
-    # Remap pg types to SQLite-compatible equivalents before table creation
+    # Synchronous SQLite in-memory session for DB model tests
     for table in Base.metadata.tables.values():
         for col in table.columns:
             col_type = type(col.type)
@@ -39,7 +34,6 @@ def db_session():
                 col.type = JSON()
             elif col_type.__name__ == "UUID":
                 col.type = String(36)
-            # SQLite requires INTEGER (not BIGINT) for autoincrement PKs
             elif col_type.__name__ == "BigInteger" and col.primary_key:
                 col.type = Integer()
 
@@ -103,7 +97,7 @@ class TestLocalFsBlobStore:
             blob_store.get_bytes("sha256:0000000000000000000000000000000000000000000000000000000000000000")
 
     def test_storage_layout(self, blob_store: LocalFsBlobStore, tmp_path):
-        """Verify files land in {root}/sha256/{first2}/{fullhash}."""
+        # Verify files land in {root}/sha256/{first2}/{fullhash}
         import hashlib
 
         data = b"layout check"

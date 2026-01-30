@@ -1,4 +1,4 @@
-"""Database session management — async SQLAlchemy engine + session factory."""
+"""DB session management — async SQLAlchemy engine + session factory"""
 
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
@@ -14,7 +14,7 @@ async_session_factory = async_sessionmaker(engine, expire_on_commit=False)
 
 @asynccontextmanager
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    """Async context manager yielding a session. Also usable as a FastAPI dependency."""
+    # Async context manager yielding a session
     async with async_session_factory() as session:
         try:
             yield session
@@ -24,8 +24,8 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
+# FastAPI-compatible dependency
 async def get_session_dep() -> AsyncGenerator[AsyncSession, None]:
-    """FastAPI-compatible dependency (async generator, no @asynccontextmanager)."""
     async with async_session_factory() as session:
         try:
             yield session
@@ -35,7 +35,7 @@ async def get_session_dep() -> AsyncGenerator[AsyncSession, None]:
             raise
 
 
+# Create all tables
 async def init_db() -> None:
-    """Create all tables. For dev/testing only; use Alembic for production."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
