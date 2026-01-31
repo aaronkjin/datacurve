@@ -19,9 +19,10 @@ class Settings(BaseSettings):
     TEST_COMMAND: str = "pytest"
 
     # LLM judge model
-    JUDGE_MODEL: str = "claude-sonnet-4-20250514"
+    JUDGE_MODEL: str = "gpt-5.2"
+    OPENAI_API_KEY: str = ""
 
-    model_config = {"env_prefix": "", "case_sensitive": True}
+    model_config = {"env_prefix": "", "case_sensitive": True, "env_file": ".env"}
 
 
 settings = Settings()
