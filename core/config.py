@@ -12,6 +12,12 @@ class Settings(BaseSettings):
     # Blob store root dir
     BLOB_STORE_PATH: str = "/data/blobs"
 
+    # QA test runner
+    TEST_TIMEOUT_SECONDS: int = 120
+    TEST_MEMORY_LIMIT: str = "512m"
+    TEST_BASE_IMAGE: str = "python:3.11-slim"
+    TEST_COMMAND: str = "pytest"
+
     # LLM judge model
     JUDGE_MODEL: str = "claude-sonnet-4-20250514"
 

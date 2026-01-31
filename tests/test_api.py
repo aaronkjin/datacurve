@@ -85,9 +85,12 @@ async def client(db_session: AsyncSession, tmp_path):
     app.dependency_overrides[get_session_dep] = override_session
     app.dependency_overrides[get_blob_store] = lambda: blob_store
 
+    from unittest.mock import patch, MagicMock
+
     transport = ASGITransport(app=app, raise_app_exceptions=False)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac
+    with patch("worker.celery_app.celery_app.send_task", new_callable=MagicMock):
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            yield ac
 
     app.dependency_overrides.clear()
 

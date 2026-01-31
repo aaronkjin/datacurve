@@ -1,4 +1,4 @@
-"""Celery application — QA worker entrypoint."""
+"""QA worker entrypoint for Celery"""
 
 import os
 
@@ -23,5 +23,4 @@ celery_app.conf.update(
     worker_prefetch_multiplier=1,
 )
 
-# Task modules will be autodiscovered here:
-# celery_app.autodiscover_tasks(["worker.tasks"])
+celery_app.autodiscover_tasks(["worker.tasks"])

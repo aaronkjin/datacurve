@@ -144,7 +144,8 @@ async def finalize_trace(
     trace_row.finalized_at_ms = now_ms
 
     qa_job_id = str(uuid.uuid4())
-    # TODO: celery_app.send_task("qa.run_tests", args=[trace_id], task_id=qa_job_id)
+    from worker.celery_app import celery_app
+    celery_app.send_task("qa.run_tests", args=[trace_id], task_id=qa_job_id)
 
     await session.flush()
 
