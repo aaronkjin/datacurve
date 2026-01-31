@@ -365,8 +365,7 @@ def _call_llm_judge(judge_packet: str) -> JudgeOutput:
 
     response = client.chat.completions.create(
         model=settings.JUDGE_MODEL,
-        max_completion_tokens=2000,
-        temperature=0,
+        max_completion_tokens=8000,
         messages=[
             {
                 "role": "system",
@@ -380,7 +379,19 @@ def _call_llm_judge(judge_packet: str) -> JudgeOutput:
     )
 
     # Extract text content from response
-    response_text = response.choices[0].message.content or ""
+    if not response.choices:
+        raise ValueError(f"LLM returned no choices. Response: {response}")
+    
+    message = response.choices[0].message
+    response_text = message.content or ""
+    
+    # Log for debugging if content is empty
+    if not response_text:
+        logger.error(f"Empty response content. Full message: {message}")
+        logger.error(f"Finish reason: {response.choices[0].finish_reason}")
+        # Check if there's a refusal
+        if hasattr(message, 'refusal') and message.refusal:
+            raise ValueError(f"LLM refused to respond: {message.refusal}")
 
     # Parse JSON from response
     try:

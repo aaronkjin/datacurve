@@ -296,7 +296,7 @@ class TestTraceRoundTrip:
                     "final_passed": True,
                 },
                 "judge": {
-                    "model": "gpt-4",
+                    "model": "gpt-5.2",
                     "scores": {
                         "root_cause_identification": 4.0,
                         "plan_quality": 3.5,

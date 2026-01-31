@@ -37,17 +37,25 @@ services:
     volumes:
       - .:/app
       - blobdata:/data/blobs
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql+asyncpg://datacurve:datacurve_dev@postgres:5432/datacurve
       DATABASE_URL_SYNC: postgresql://datacurve:datacurve_dev@postgres:5432/datacurve
       REDIS_URL: redis://redis:6379/0
       BLOB_STORE_PATH: /data/blobs
-      JUDGE_MODEL: claude-sonnet-4-20250514
+      JUDGE_MODEL: gpt-5.2
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   worker:
     build:
@@ -58,16 +66,20 @@ services:
       - .:/app
       - blobdata:/data/blobs
       - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgresql+asyncpg://datacurve:datacurve_dev@postgres:5432/datacurve
       DATABASE_URL_SYNC: postgresql://datacurve:datacurve_dev@postgres:5432/datacurve
       REDIS_URL: redis://redis:6379/0
       BLOB_STORE_PATH: /data/blobs
-      JUDGE_MODEL: claude-sonnet-4-20250514
+      JUDGE_MODEL: gpt-5.2
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      api:
         condition: service_healthy
 
 volumes:
