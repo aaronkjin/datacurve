@@ -88,7 +88,7 @@ Research Brief: "We want to improve our model's ability to autonomously fix bugs
    python scripts/demo_e2e.py
 
    # or run the itsdangerous real-repo demo
-   python scripts/demo_itsdangerous.py
+   python scripts/demo_e2e_real_repo.py
    ```
 
 4. See final judge scores after E2E flow, for example:

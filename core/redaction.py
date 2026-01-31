@@ -66,7 +66,6 @@ def apply_redaction(
     rules: list[RedactionRule] | None = None,
     max_bytes: int = MAX_BLOB_BYTES,
 ) -> RedactionResult:
-    # Apply the requested redaction rules to raw blob data
     if rules is None:
         rules = [RedactionRule.secret_scan, RedactionRule.pii_mask, RedactionRule.truncate_large]
 

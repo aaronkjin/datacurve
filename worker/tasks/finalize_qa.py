@@ -18,7 +18,6 @@ def finalize_qa(self, trace_id: str) -> dict:
 
 
 def _finalize_qa_impl(trace_id: str) -> dict:
-    # Verify QA data is present and set trace status to complete
     with get_sync_session() as session:
         row = session.query(TraceRow).filter_by(trace_id=trace_id).first()
         if row is None:

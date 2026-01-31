@@ -21,7 +21,6 @@ blob_store = LocalFsBlobStore()
 
 @celery_app.task(name="qa.run_tests", bind=True, max_retries=0)
 def run_tests(self, trace_id: str) -> dict:
-    # Execute tests in a Docker container + store results
     try:
         return _run_tests_impl(trace_id)
     except Exception as exc:
@@ -124,7 +123,6 @@ def _run_tests_impl(trace_id: str) -> dict:
 
 
 def _mark_failed(trace_id: str, error_msg: str) -> None:
-    # Set trace status to failed and store error in qa_json
     try:
         with get_sync_session() as session:
             row = session.query(TraceRow).filter_by(trace_id=trace_id).first()

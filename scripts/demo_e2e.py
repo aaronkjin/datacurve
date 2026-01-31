@@ -113,7 +113,6 @@ tests/test_calculator.py::test_divide_by_zero PASSED
 
 
 def get_sample_trace_create() -> dict[str, Any]:
-    # Return sample data for POST /traces
     return {
         "repo": {
             "repo_id": "demo-org/calculator-app",
@@ -153,7 +152,6 @@ def get_sample_trace_create() -> dict[str, Any]:
 
 
 def get_sample_final_state() -> dict[str, Any]:
-    # Return sample data for POST /traces/{trace_id}/finalize
     return {
         "final_state": {
             "commit_head": "b2c3d4e5f6789012345678901234567890abcdef",
@@ -171,8 +169,6 @@ def get_sample_final_state() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 class DemoRunner:
-    # Runs the E2E demo flow
-
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
         self.client = httpx.Client(timeout=30.0)
@@ -183,7 +179,6 @@ class DemoRunner:
         self.failed = False
 
     def run(self) -> bool:
-        # Run the full E2E demo. Returns True on success, False on failure
         log_info(f"{BOLD}Starting E2E demo...{RESET}")
         log_info(f"API URL: {self.base_url}")
         print()
@@ -219,7 +214,6 @@ class DemoRunner:
             return True
 
     def step_health_check(self) -> bool:
-        # Wait for API to be healthy
         log_info("Checking API health...")
         
         start_time = time.time()
@@ -240,7 +234,6 @@ class DemoRunner:
         return False
 
     def step_create_trace(self) -> bool:
-        # Create a new trace via POST /traces
         log_info("Creating trace...")
 
         payload = get_sample_trace_create()
@@ -261,7 +254,6 @@ class DemoRunner:
         return True
 
     def step_upload_blobs(self) -> bool:
-        # Upload sample blobs via POST /blobs
         log_info("Uploading blobs...")
 
         blobs_to_upload = [
@@ -292,7 +284,6 @@ class DemoRunner:
         return True
 
     def step_append_events(self) -> bool:
-        # Append a batch of events via POST /traces/{trace_id}/events
         log_info("Appending events...")
 
         if not self.trace_id:
@@ -424,7 +415,6 @@ class DemoRunner:
         return True
 
     def step_finalize_trace(self) -> bool:
-        # Finalize the trace via POST /traces/{trace_id}/finalize
         log_info("Finalizing trace...")
 
         if not self.trace_id:
@@ -458,7 +448,6 @@ class DemoRunner:
         return True
 
     def step_poll_completion(self) -> bool:
-        # Poll until trace status is 'complete' or 'failed'
         if not self.trace_id:
             log_fail("No trace_id available")
             return False
@@ -496,7 +485,6 @@ class DemoRunner:
         return False
 
     def step_validate_trace(self) -> bool:
-        # Validate the final trace meets all acceptance criteria
         log_info("Validating final trace...")
 
         if not self.trace_id:
@@ -609,7 +597,6 @@ class DemoRunner:
 # ---------------------------------------------------------------------------
 
 def main() -> int:
-    # Run the E2E demo and return exit code
     runner = DemoRunner(API_URL)
     success = runner.run()
     return 0 if success else 1

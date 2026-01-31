@@ -129,7 +129,6 @@ IMPORTANT:
 
 @celery_app.task(name="qa.run_judge", bind=True, max_retries=0)
 def run_judge(self, trace_id: str) -> dict:
-    # Execute LLM judge and store results in trace qa_json
     try:
         return _run_judge_impl(trace_id)
     except Exception as exc:
@@ -222,7 +221,6 @@ def _build_judge_packet(
     final_state_json: dict,
     qa_json: dict,
 ) -> str:
-    # Build a concise judge packet from trace data
     sections: list[str] = []
 
     # 1. Bug report summary
@@ -285,7 +283,6 @@ def _build_judge_packet(
 
 
 def _summarize_event(event: dict) -> str | None:
-    # Create a concise summary of an event for the judge packet
     seq = event.get("seq", 0)
     ts_ms = event.get("ts_ms", 0)
     event_type = event.get("type", "unknown")
@@ -346,7 +343,6 @@ def _summarize_event(event: dict) -> str | None:
 
 
 def _fetch_blob_content_preview(blob_id: str, max_chars: int = 500) -> str | None:
-    # Try to fetch blob content and return a preview
     if not blob_id:
         return None
     try:
@@ -360,7 +356,6 @@ def _fetch_blob_content_preview(blob_id: str, max_chars: int = 500) -> str | Non
 
 
 def _call_llm_judge(judge_packet: str) -> JudgeOutput:
-    # Call the LLM judge and parse the response
     client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)
 
     response = client.chat.completions.create(
@@ -427,7 +422,6 @@ def _call_llm_judge(judge_packet: str) -> JudgeOutput:
 
 
 def _mark_failed(trace_id: str, error_msg: str) -> None:
-    # Set trace status to failed and store error in qa_json
     try:
         with get_sync_session() as session:
             row = session.query(TraceRow).filter_by(trace_id=trace_id).first()

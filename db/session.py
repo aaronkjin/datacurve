@@ -21,7 +21,6 @@ sync_session_factory = sessionmaker(sync_engine, expire_on_commit=False)
 
 @asynccontextmanager
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    # Async context manager yielding a session
     async with async_session_factory() as session:
         try:
             yield session
@@ -44,7 +43,6 @@ async def get_session_dep() -> AsyncGenerator[AsyncSession, None]:
 
 @contextmanager
 def get_sync_session() -> Generator[Session, None, None]:
-    # Sync context manager yielding a session (for Celery workers)
     session = sync_session_factory()
     try:
         yield session
